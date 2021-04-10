@@ -1,0 +1,33 @@
+- id: "3142"
+  engine: "123"
+  type: "pressure"
+  name: "Engine 123"
+  value: 70
+  min_value: 0
+  max_value: 120
+- id: "32234"
+  master-sensor-id: "3142"
+  type: "temperature"
+  value: 82
+  min_value: -50
+  max_value: 150
+- id: "57230"
+  master-sensor-id: "3142"
+  type: "temperature"
+  value: 101
+  min_value: 0
+  max_value: 273
+- id: "5703"
+  engine: "156"
+  location: ""
+  type: "pressure"
+  name: "Engine 156"
+  value: 73
+  min_value: 0
+  max_value: 150
+- id: "89145"
+  master-sensor-id: "5703"
+  type: "temperature"
+  value: 99
+  min_value: 0
+  max_value: 100
