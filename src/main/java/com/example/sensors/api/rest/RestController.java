@@ -1,10 +1,12 @@
 package com.example.sensors.api.rest;
 
 import com.example.sensors.api.provider.DataProvider;
+import com.example.sensors.api.sensor.Sensor;
 import com.example.sensors.api.update.UpdateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @org.springframework.web.bind.annotation.RestController
@@ -25,5 +27,15 @@ public class RestController {
     @PostMapping("/sensors/{id}")
     public void updateSensorValue(@PathVariable String id, @RequestBody UpdateHelper helper) {
         this.provider.updateSensor(id, helper.getValue(), helper.getOperation());
+    }
+
+    @GetMapping("/sensors")
+    public Collection<Sensor> getAllSensors() {
+        return this.provider.getAllSensors();
+    }
+
+    @GetMapping("/sensors/{id}")
+    public Sensor getSensorByID(@PathVariable String id) {
+        return this.provider.getSensorByID(id);
     }
 }

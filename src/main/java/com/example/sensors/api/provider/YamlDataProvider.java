@@ -29,7 +29,7 @@ public class YamlDataProvider implements DataProvider {
     public void getDataOnStartup(ApplicationStartedEvent event) {
 
         // download file
-        System.out.println("Downloading file from URL: " + url + " ...");
+        System.out.println("\nDownloading file from URL: " + url + " ...");
 
         try {
             InputStream in = new URL(url).openConnection().getInputStream();
@@ -105,6 +105,8 @@ public class YamlDataProvider implements DataProvider {
         if (method == UpdateMethod.INCREMENT) newValue = sensor.getValue() + value;
         else if (method == UpdateMethod.DECREMENT) newValue = sensor.getValue() - value;
         else if (method == UpdateMethod.SET) newValue = value;
+
+        // this really has no way of happening, but let's add it as a "default branch" anyway
         else throw new IllegalArgumentException("Error: unrecognized update method: " + method);
 
         // update if able, notify if unable
@@ -112,5 +114,15 @@ public class YamlDataProvider implements DataProvider {
             sensor.setValue(newValue);
         else throw new IllegalArgumentException("Error: value " + newValue + " is out of bounds for sensor");
 
+    }
+
+    @Override
+    public Collection<Sensor> getAllSensors() {
+        return this.sensors.values();
+    }
+
+    @Override
+    public Sensor getSensorByID(String id) {
+        return this.sensors.get(id);
     }
 }
