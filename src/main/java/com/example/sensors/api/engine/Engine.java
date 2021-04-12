@@ -1,4 +1,4 @@
-package com.example.sensors.api.Engine;
+package com.example.sensors.api.engine;
 
 import com.example.sensors.api.sensor.PressureSensor;
 import com.example.sensors.api.sensor.TemperatureSensor;

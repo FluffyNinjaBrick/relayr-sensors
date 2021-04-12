@@ -1,6 +1,6 @@
 package com.example.sensors.api.provider;
 
-import com.example.sensors.api.Engine.Engine;
+import com.example.sensors.api.engine.Engine;
 import com.example.sensors.api.sensor.PressureSensor;
 import com.example.sensors.api.sensor.Sensor;
 import com.example.sensors.api.sensor.TemperatureSensor;

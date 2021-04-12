@@ -4,7 +4,7 @@ import com.example.sensors.api.update.UpdateMethod;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -15,7 +15,7 @@ public abstract class Sensor {
     private int minValue;
     private int maxValue;
 
-    protected Sensor(LinkedHashMap<String, Object> sensorMap) {
+    protected Sensor(Map<String, Object> sensorMap) {
         this.id = (String) sensorMap.get("id");
         this.value    = (int) sensorMap.get("value");
         this.minValue = (int) sensorMap.get("min_value");
@@ -32,7 +32,7 @@ public abstract class Sensor {
         else if (method == UpdateMethod.DECREMENT) newValue = this.value - value;
         else if (method == UpdateMethod.SET) newValue = value;
 
-        // this really has no way of happening, but let's add it as a "default branch" anyway
+        // this really has no way of happening, but it tells Java that newValue must be initialized
         else throw new IllegalArgumentException("Error: unrecognized update method: " + method);
 
         // update if able, notify if unable
