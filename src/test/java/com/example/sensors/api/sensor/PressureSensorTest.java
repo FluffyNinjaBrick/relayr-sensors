@@ -34,7 +34,7 @@ class PressureSensorTest {
     }
 
     @Test
-    void hasError() {
+    void hasErrorTest() {
 
         assertFalse(testSensor.hasError(5));    // case 0 - the pressure is above the threshold
         assertFalse(testSensor.hasError(-40));  // case 1 - the reference value is too small to be applicable

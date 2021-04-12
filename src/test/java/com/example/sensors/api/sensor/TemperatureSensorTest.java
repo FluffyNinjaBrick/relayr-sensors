@@ -30,7 +30,7 @@ class TemperatureSensorTest {
     }
 
     @Test
-    void hasError() {
+    void hasErrorTest() {
 
         assertFalse(testSensor.hasError(20));   // case 0 - the temperature is below the threshold
         assertFalse(testSensor.hasError(-40));  // case 1 - the reference value is too small to be applicable
