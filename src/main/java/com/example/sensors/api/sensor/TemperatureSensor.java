@@ -16,4 +16,9 @@ public class TemperatureSensor extends Sensor {
         this.masterSensorId = (String) sensorMap.get("master-sensor-id");
     }
 
+    @Override
+    public boolean hasError(int refValue) {
+        return this.getValue() > refValue;
+    }
+
 }

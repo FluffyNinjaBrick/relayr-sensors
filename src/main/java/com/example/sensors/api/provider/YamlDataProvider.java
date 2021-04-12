@@ -1,5 +1,6 @@
 package com.example.sensors.api.provider;
 
+import com.example.sensors.api.Engine.Engine;
 import com.example.sensors.api.sensor.PressureSensor;
 import com.example.sensors.api.sensor.Sensor;
 import com.example.sensors.api.sensor.TemperatureSensor;
@@ -25,10 +26,60 @@ public class YamlDataProvider implements DataProvider {
     // sensors are mapped by their IDs for ease of referencing
     private final HashMap<String, Sensor> sensors = new HashMap<>();
 
+    // engines are mapped by the ID of their pressure sensor, for the same reason
+    private final HashMap<String, Engine> engines = new HashMap<>();
+
+
+    // ------------- init -------------
+
     @EventListener
     public void getDataOnStartup(ApplicationStartedEvent event) {
+        downloadFile();
+        parseFileAndCreateSensors();
+        createEnginesFromSensors();
+    }
 
-        // download file
+
+    // ------------- main API methods -------------
+
+    @Override
+    public List<String> getMalfunctioningEngines(int minPressure, int maxTemperature) {
+        List<String> brokenEngines = new ArrayList<>();
+        for (Engine engine: engines.values())
+            if (engine.isBroken(minPressure, maxTemperature))
+                brokenEngines.add(engine.getId());
+        return brokenEngines;
+    }
+
+    @Override
+    public void updateSensor(String id, int value, UpdateMethod method) {
+
+        // notify if non-existent ID
+        if (!this.sensors.containsKey(id)) throw new NoSuchElementException("Error: no sensor exists with id " + id);
+
+        // else update relevant sensor
+        this.sensors.get(id).update(value, method);
+
+    }
+
+
+    // ------------- the debugging stuff -------------
+
+    @Override
+    public Collection<Sensor> getAllSensors() {
+        return this.sensors.values();
+    }
+
+    @Override
+    public Sensor getSensorByID(String id) {
+        return this.sensors.get(id);
+    }
+
+
+    // ------------- a few private methods to split the init logic into smaller parts -------------
+
+    private void downloadFile() {
+
         System.out.println("\nDownloading file from URL: " + url + " ...");
 
         try {
@@ -40,13 +91,16 @@ public class YamlDataProvider implements DataProvider {
 
         System.out.println("File downloaded");
 
+    }
 
-        // parse YAML
+    private void parseFileAndCreateSensors() {
+
         Yaml yaml = new Yaml();
         System.out.println("Parsing file...");
 
         try {
 
+            // parse yaml file
             InputStream fileInputStream = new FileInputStream(new File(filePath));
             ArrayList<LinkedHashMap<String, Object>> sensors = yaml.load(fileInputStream);
 
@@ -70,59 +124,25 @@ public class YamlDataProvider implements DataProvider {
 
     }
 
-    @Override
-    public List<String> getMalfunctioningEngines(int minPressure, int maxTemperature) {
+    private void createEnginesFromSensors() {
 
-        // using a hashmap will easily take care of duplicate engine IDs
-        HashMap<String, Boolean> brokenEngines = new HashMap<>();
+        ArrayList<PressureSensor> pressureSensors = new ArrayList<>();
+        ArrayList<TemperatureSensor> temperatureSensors = new ArrayList<>();
 
-        // check for anomalies
-        for (Sensor sensor: this.sensors.values())
-            // pressure
-            if (sensor instanceof PressureSensor && sensor.getValue() < minPressure)
-                brokenEngines.put(((PressureSensor) sensor).getEngineId(), true);
-            // temperature
-            else if (sensor instanceof TemperatureSensor && sensor.getValue() > maxTemperature) {
-                // no check needed for cast, this is guaranteed to work, assuming the config file was correct
-                PressureSensor master = (PressureSensor) this.sensors.get(((TemperatureSensor) sensor).getMasterSensorId());
-                brokenEngines.put(master.getEngineId(), true);
-            }
+        // sort the sensors
+        for (Sensor sensor: sensors.values()) {
+            if (sensor instanceof PressureSensor) pressureSensors.add((PressureSensor) sensor);
+            else if (sensor instanceof TemperatureSensor) temperatureSensors.add((TemperatureSensor) sensor);
+            // at this point we are guaranteed the sensors are one of these types, so no default branch is needed
+        }
 
-        // return a list of broken engines
-        return new ArrayList<>(brokenEngines.keySet());
-    }
+        // create engine for each pressure sensor
+        for (PressureSensor sensor: pressureSensors)
+            this.engines.put(sensor.getId(), new Engine(sensor));
 
-    @Override
-    public void updateSensor(String id, int value, UpdateMethod method) {
+        // add temperature sensors to engines
+        for (TemperatureSensor sensor: temperatureSensors)
+            this.engines.get(sensor.getMasterSensorId()).addTemperatureSensor(sensor);
 
-        // edge case - invalid ID
-        if (!this.sensors.containsKey(id)) throw new NoSuchElementException("Error: no sensor exists with id " + id);
-
-        Sensor sensor = this.sensors.get(id);
-        int newValue;
-
-        // a switch statement would be five times as long, so let's go with ifs
-        if (method == UpdateMethod.INCREMENT) newValue = sensor.getValue() + value;
-        else if (method == UpdateMethod.DECREMENT) newValue = sensor.getValue() - value;
-        else if (method == UpdateMethod.SET) newValue = value;
-
-        // this really has no way of happening, but let's add it as a "default branch" anyway
-        else throw new IllegalArgumentException("Error: unrecognized update method: " + method);
-
-        // update if able, notify if unable
-        if (newValue >= sensor.getMinValue() && newValue <= sensor.getMaxValue())
-            sensor.setValue(newValue);
-        else throw new IllegalArgumentException("Error: value " + newValue + " is out of bounds for sensor");
-
-    }
-
-    @Override
-    public Collection<Sensor> getAllSensors() {
-        return this.sensors.values();
-    }
-
-    @Override
-    public Sensor getSensorByID(String id) {
-        return this.sensors.get(id);
     }
 }

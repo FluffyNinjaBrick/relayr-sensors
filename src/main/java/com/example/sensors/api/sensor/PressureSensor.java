@@ -18,4 +18,9 @@ public class PressureSensor extends Sensor {
         this.name     = (String) sensorMap.get("name");
     }
 
+    @Override
+    public boolean hasError(int refValue) {
+        return this.getValue() < refValue;
+    }
+
 }
