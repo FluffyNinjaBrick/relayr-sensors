@@ -1,9 +1,11 @@
 package com.example.sensors.api.provider;
 
+import com.example.sensors.api.argstore.ArgStore;
 import com.example.sensors.api.engine.Engine;
 import com.example.sensors.api.sensor.Sensor;
 import com.example.sensors.api.update.UpdateMethod;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -16,8 +18,8 @@ public class DataProvider {
     // initializer
     private final Initializer initializer;
 
-    private final String url = "https://raw.githubusercontent.com/relayr/pdm-test/master/sensors.yml";
-    private final String filePath = "./sensors.yml";
+    @Value("${configFile.path}")
+    private String filePath;
 
     // sensors are mapped by their IDs for ease of referencing
     private final HashMap<String, Sensor> sensors = new HashMap<>();
@@ -38,7 +40,7 @@ public class DataProvider {
     @EventListener
     public void getDataOnStartup(ApplicationStartedEvent event) {
         this.initializer
-            .downloadFile(url, filePath)
+            .downloadFile(ArgStore.url, filePath)
             .parseFileAndCreateSensors(filePath, sensors)
             .createEnginesFromSensors(sensors, engines);
     }
