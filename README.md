@@ -12,7 +12,7 @@ The program can be run in three ways:
 * with **Docker** - described below.
 
 ### Running with Docker
-In the */src* folder, open up a terminal and execute the following:
+In the */api* folder, open up a terminal and execute the following:
 * *mvnw package -DskipTests* - generates an executable .jar file in */src/target*. Remove the *-DskipTests* option if you want to also run tests.
 * *docker build -t api .* - creates a Docker image called "api" from the .jar file
 * *docker run -p8080:8080 -d --name="Sensor_API" --rm api <config-url\>* - starts the application and makes it available on port 8080 of the host machine.
@@ -22,7 +22,7 @@ When you're done, execute *docker stop Sensor_API* to shut down the application.
 
 ## Tests
 There are two ways to run the tests for the application:
-* from the source code, by manually running the methods in the */src/test* directory
+* from the source code, by manually running the methods in the */api/src/test/...* directory
 * with maven, via the *mvnw test* command
 
 As mentioned above, *mvnw package* without the *-DskipTests* option will also execute all the tests.
@@ -46,6 +46,8 @@ Where *"operation"* is *SET*, *INCREMENT* or *DECREMENT*. The field **is case se
 The other two methods were added for ease of verification and debugging:
 * *GET http://localhost:8080/sensors* - returns a list of all the sensors in the system
 * *GET http://localhost:8080/sensors/<sensor-id\>* - returns the sensor specified by *<sensor-id\>*
+
+If something goes wrong, the appropriate error message will be seen in the response body. For example, this will be the case when we pass a non-existent ID through the update/get sensor requests, or when the update request would result in a value that lies outside of the sensor's boundaries.
 
 
 
