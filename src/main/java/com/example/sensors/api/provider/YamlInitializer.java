@@ -26,6 +26,7 @@ public class YamlInitializer implements Initializer {
         try {
             InputStream in = new URL(url).openConnection().getInputStream();
             Files.copy(in, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+            in.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -42,8 +43,9 @@ public class YamlInitializer implements Initializer {
         try {
 
             // parse yaml file
-            InputStream fileInputStream = new FileInputStream(new File(filePath));
-            ArrayList<LinkedHashMap<String, Object>> sensorMaps = yaml.load(fileInputStream);
+            InputStream in = new FileInputStream(new File(filePath));
+            ArrayList<LinkedHashMap<String, Object>> sensorMaps = yaml.load(in);
+            in.close();
 
             // the yaml parser returns a list of hash maps - iterate over it and create sensors
             for (LinkedHashMap<String, Object> sensorMap: sensorMaps) {
@@ -57,7 +59,7 @@ public class YamlInitializer implements Initializer {
                 sensors.put(newSensor.getId(), newSensor);    // sensor is no longer null
             }
 
-        } catch (FileNotFoundException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
