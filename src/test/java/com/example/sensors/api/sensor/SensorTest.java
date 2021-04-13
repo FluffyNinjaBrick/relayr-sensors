@@ -56,6 +56,8 @@ class SensorTest {
         // value validation
         assertThrows(IllegalArgumentException.class, () -> testSensor.update(-20, UpdateMethod.SET));
         assertThrows(IllegalArgumentException.class, () -> testSensor.update(40, UpdateMethod.SET));
+        assertThrows(IllegalArgumentException.class, () -> testSensor.update(25, UpdateMethod.INCREMENT));
+        assertThrows(IllegalArgumentException.class, () -> testSensor.update(-25, UpdateMethod.DECREMENT));
 
     }
 
