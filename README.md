@@ -39,7 +39,10 @@ That last group includes the API endpoint methods.
 
 ## API
 The final API provides four endpoints. Firstly, there are the two specified in the task description:
-* *GET http://localhost:8080/engines?minPressure=<value\>&maxTemperature=<value\>* - returns a list of malfunctioning engines, in the form of a list of engine IDs
+* *GET http://localhost:8080/engines?minPressure=<value\>&maxTemperature=<value\>* - returns a list of malfunctioning engines, in the form of a list of engine IDs.<br/>
+  **Please note:** the logic is designed in such a way that a sensor will only be checked for malfunctions if the reference value passed through the request is
+  within its min-max range. Otherwise, the test will be deemed inapplicable to this sensor, and will not be failed. Don't be surprised if you set a very high
+  pressure or very low temperature and see no malfunctioning engines, this is intentional behavior.
 * *POST http://localhost:8080/sensors/<sensor-id\>* - updates the sensor specified by *<sensor-id\>* according to the instructions in the body. The body is a small JSON file, as follows:
 <pre>
 {
