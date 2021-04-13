@@ -36,7 +36,6 @@ public class DataProvider {
 
 
     // ------------- init -------------
-
     @EventListener
     public void getDataOnStartup(ApplicationStartedEvent event) {
         this.initializer
