@@ -4,18 +4,12 @@ import com.example.sensors.api.engine.Engine;
 import com.example.sensors.api.sensor.PressureSensor;
 import com.example.sensors.api.sensor.Sensor;
 import com.example.sensors.api.sensor.TemperatureSensor;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -25,9 +19,10 @@ class YamlInitializerTest {
 
     private static YamlInitializer initializer;
     private static File testConfigFile;
-    private static String configFileName = "testConfig";
-    private static String configFileSuffix = ".yml";
-    private static String fileContent =
+    private final static String configFileName = "testConfig";
+    private final static String configFileSuffix = ".yml";
+
+    public final static String fileContent =
             "- id: \"3142\"\n" +
             "  engine: \"123\"\n" +
             "  type: \"pressure\"\n" +
@@ -79,7 +74,7 @@ class YamlInitializerTest {
     }
 
     @Test
-    void parseFileAndCreateSensorsTest() throws IOException {
+    void parseFileAndCreateSensorsTest() {
 
         HashMap<String, Sensor> sensors = new HashMap<>();
 
@@ -139,7 +134,7 @@ class YamlInitializerTest {
 
     // note - this test depends on the previous one passing, as it is covers the continuation of the processing chain
     @Test
-    void createEnginesFromSensorsTest() throws IOException {
+    void createEnginesFromSensorsTest() {
 
         HashMap<String, Sensor> sensors = new HashMap<>();
         HashMap<String, Engine> engines = new HashMap<>();
