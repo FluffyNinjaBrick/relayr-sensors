@@ -6,6 +6,8 @@ The application is built with Java 11, you'll need that JDK to run it.</br>
 To build the app with maven you will also need to have your JAVA_HOME set to that JDK's folder.</br>
 The application communicates through port 8080. It will not work if said port is occupied.
 
+The */api* folder is the root of an IntelliJ project. If you want to look at the code using that IDE, you can simply open it as a project.
+
 The app can be run in three ways:
 * from the source code, by manually running the main method in the ApiApplication class
 * using the executable .jar, via the command *java -jar <path-to-jar\> <config-url\>*
